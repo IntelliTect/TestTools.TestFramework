@@ -86,7 +86,7 @@ namespace IntelliTect.TestTools.TestFramework
                         {
                             TestBlockException = new(
                                 $"Unknown error occurred while running test block {tb}. " +
-                                "Please file an issue: https://github.com/IntelliTect/TestTools/issues");
+                                "Please file an issue: https://github.com/IntelliTect/TestTools.TestFramework/issues");
                         }
                         break;
                     }
