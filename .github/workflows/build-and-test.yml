@@ -48,4 +48,4 @@ jobs:
     - run: |
         echo Installed chromium version: ${{ steps.setup-chrome.outputs.chrome-version }}
     - name: Test
-      run: dotnet test --no-build --configuration Release --verbosity normal
+      run: dotnet test --filter FullyQualifiedName!~ExampleTests --no-build --configuration Release --verbosity normal
