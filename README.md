@@ -1,23 +1,57 @@
 
-AspNetCore
+TestFramework
 ==========
 
-Provides test helper classes for instantiating ASP.NET Core classes like RoleManager and UserManager.
-
-Windows UI Test Wrapper
-===========
-
-Provides wrappers for calling Microsoft's UiTestControl classes for WPF and WinForm applications in a more concise, reliable manner
+IntelliTect's TestFramework helps manage test dependencies and data sharing in a highly visible and easy-to-read way. It adds a layer between your unit test and executing code to manage the things that, in complex projects, usually get abstracted away out of visibility. The goal is to provide a way to manage those dependencies without hiding them, so even people new to the project can start writing tests quickly. Under the covers, it's using Dependency Injection to inject test data and dependencies into test blocks when needed. Test Framework uses a builder pattern to help facilitate highly composable tests with minimal extraneous code.
 
 Usage
 -----
-To use, inherit a class from the solution's DesktopControls class and make application-specific calls in the inherited class using generic types:
+To start, you need some executable code. Your executable code needs to live in TestBlocks. A test block is any code that derives from the TestBlock class OR implements the ITestBlock interface and has an Execute() method:
 ```
-FindWpfControlByAutomationId( "textBoxControl1", c => new WpfEdit( c ) );
+using IntelliTect.TestTools.TestFramework;
+
+namespace ExampleTests.TestBlocks;
+
+internal class VerifyTrueisTrue : ITestBlock
+{
+   public void Execute()
+   {
+      Assert.True(true);
+   }
+}
+
 ```
 
-Inherit a class from BaseTestInherit and set the ApplicationLocation and create a new field for the above inherited class.
+Next, in your unit test method instantiate a new TestBuilder:
+```
+[Fact]
+public void Test1()
+{
+   TestBuilder builder = new();
+}
+```
+This builder object is then used to manage everything about the test and constituent test blocks. In simple cases, you can add your test block and execute without any further setup The whole unit test looks like:
+```
+[Fact]
+public void Test1()
+{
+   TestBuilder builder = new();
 
-Inherit test classes from the BaseTestInherit inherited class, and call methods via the new field.
+   builder.AddTestBlock<TestBlocks.VerifyTrueisTrue>()
+
+   TestCase test = builder.Build()
+   test.ExecuteTestCase();
+}
+```
+Each test block can:
+- Be standalone
+- Have dependencies injected from external sources
+- Have dependencies injected from other test blocks
+- Create or modify dependencies for other test blocks
+
+This is a simple example, and frankly would be easier as its own unit test. TestFramework shines, though, when dependencies start to become complex. While agnostic to unit, database, API, or UI testing, particularly complex API and UI testing is where we most commonly implement Test Framework. If we were to convert this to do something in Selenium, it would look a bit different. Let's define some real test cases. If we use http://the-internet.herokuapp.com/entry_ad, we can start to see how to configure tests for different scenarios.
+
+IN PROGRESS
+
 
 Example projects at https://github.com/IntelliTect/TestTools
