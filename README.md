@@ -2,7 +2,13 @@
 TestFramework
 ==========
 
-IntelliTect's TestFramework helps manage test dependencies and data sharing in a highly visible and easy-to-read way. It adds a layer between your unit test and executing code to manage the things that, in complex projects, usually get abstracted away out of visibility. The goal is to provide a way to manage those dependencies without hiding them, so even people new to the project can start writing tests quickly. Under the covers, it's using Dependency Injection to inject test data and dependencies into test blocks when needed. Test Framework uses a builder pattern to help facilitate highly composable tests with minimal extraneous code.
+IntelliTect's TestFramework helps manage test dependencies and data sharing in a highly visible and easy-to-read way. It adds a layer between your unit test method and executing code to manage the things that, in complex projects, often get abstracted away out of visibility. The goal is to provide a way to manage those dependencies without hiding them, so even people new to the project can start writing tests quickly. Under the covers, it's using dependency injection to inject test data and dependencies into test blocks only when needed. Test Framework uses a builder pattern to help facilitate highly composable tests with minimal extraneous code.
+
+Current implementation is in C#, however the pattern is language agnostic and could be implemented in other languages.
+
+Design
+-----
+TestFramework works within existing unit test frameworks and runners to help keep dependencies visible and easily reusable. You still execute your tests using NUnit, xUnit, etc. Your tests still run against a class, database connection, rest client, UI driver, etc.
 
 Usage
 -----
