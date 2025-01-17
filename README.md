@@ -55,7 +55,7 @@ Each test block can:
 - Have dependencies injected from other test blocks
 - Create or modify dependencies for other test blocks
 
-This is a simple example, and frankly would be easier as its own unit test. TestFramework shines, though, when dependencies start to become complex. While agnostic to unit, database, API, or UI testing, particularly complex API and UI testing is where we most commonly implement Test Framework. If we were to convert this to do something in Selenium, it would look a bit different. Let's define some real test cases. If we use http://the-internet.herokuapp.com/entry_ad, we can start to see how to configure tests for different scenarios.
+This is a simple example, and frankly would be easier as its own unit test. TestFramework shines, though, when dependencies start to become complex. While agnostic to unit, database, API, or UI testing, particularly complex API and UI testing is where we most commonly implement Test Framework. If we were to convert this to do something more interesting, we can start to see how to configure tests for different scenarios in a more interesting fashion.
 
 IN PROGRESS
 
