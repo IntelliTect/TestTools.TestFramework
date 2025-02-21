@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace IntelliTect.TestTools.TestFramework.Tests.TestBuilderTests
@@ -136,7 +137,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestBuilderTests
         }
 
         [Fact]
-        public void TestCasePassedRemainsFalseOnFailure()
+        public async Task TestCasePassedRemainsFalseOnFailure()
         {
             // Arrange
             TestCase tc = new TestBuilder()
@@ -145,14 +146,14 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestBuilderTests
                 .Build();
 
             // Act
-            Assert.Throws<TestCaseException>(() => tc.Execute());
+            await Assert.ThrowsAsync<TestCaseException>(() => tc.Execute());
 
             // Assert
             Assert.False(tc.Passed);
         }
 
         [Fact]
-        public void TestCasePassedTurnsTrueOnSuccessfulExecution()
+        public async Task TestCasePassedTurnsTrueOnSuccessfulExecution()
         {
             // Arrange
             TestCase tc = new TestBuilder()
@@ -161,7 +162,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestBuilderTests
                 .Build();
 
             // Act
-            tc.Execute();
+            await tc.Execute();
 
             // Assert
             Assert.True(tc.Passed);

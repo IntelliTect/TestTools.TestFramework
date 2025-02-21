@@ -19,5 +19,7 @@ namespace IntelliTect.TestTools.TestFramework
         internal ParameterInfo[] ExecuteParams { get; set; } = Array.Empty<ParameterInfo>();
         internal Dictionary<Type, object> ExecuteArgumentOverrides { get; set; } = new();
         internal PropertyInfo[] PropertyParams { get; set; } = Array.Empty<PropertyInfo>();
+        internal Type AsyncReturnType { get; set; } = typeof(void);
+        internal bool IsAsync { get; set; }
     }
 }

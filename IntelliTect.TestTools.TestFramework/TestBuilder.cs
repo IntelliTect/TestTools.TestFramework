@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace IntelliTect.TestTools.TestFramework
 {
@@ -221,6 +222,7 @@ namespace IntelliTect.TestTools.TestFramework
                 }
             }
             b.IsFinallyBlock = isFinally;
+            b.IsAsync = IsAsyncMethod(b.ExecuteMethod);
             return b;
         }
 
@@ -303,25 +305,49 @@ namespace IntelliTect.TestTools.TestFramework
             }
 
             Type executeReturns = tb.ExecuteMethod.ReturnType;
+            // Or would it be better to check if the return type implements IAsyncResult?
+            if (tb.IsAsync)
+            {
+                if (executeReturns.GenericTypeArguments.Any())
+                {
+                    // How do we want to handle multiple type arguments?
+                    // Or maybe we just don't support returning something like Func<string, string, string>?)
+                    executeReturns = executeReturns.GenericTypeArguments.Last();
+                    tb.AsyncReturnType = executeReturns;
+                }
+                else
+                {
+                    // Treat Task like void for now.
+                    // Currently there's no use case for passing Tasks between test blocks.
+                    executeReturns = typeof(void);
+                }
+            }
+
             if (executeReturns != typeof(void))
             {
                 outputs.Add(executeReturns);
             }
         }
 
-        private void CheckContainerForFirstLevelDependency(Type type, List<Type?> outputs, string errorMessage)
+        private void CheckContainerForFirstLevelDependency(Type typeToCheck, List<Type?> testBlockOutputs, string errorMessage)
         {
-            ServiceDescriptor? obj = Services.FirstOrDefault(x => x.ServiceType == type || x.ImplementationType == type);
+            ServiceDescriptor? obj = Services.FirstOrDefault(x => x.ServiceType == typeToCheck || x.ImplementationType == typeToCheck);
             if (obj is null)
             {
-                Type? output = outputs.FirstOrDefault(o => o == type || o == type);
+                Type? output = testBlockOutputs.FirstOrDefault(o => o == typeToCheck || o == typeToCheck);
 
                 if (output is null)
                 {
-                    if (type is ITestCaseLogger) return;
+                    if (typeToCheck is ITestCaseLogger) return;
                     ValidationExceptions.Add(new InvalidOperationException(errorMessage));
                 }
             }
+        }
+
+        private static bool IsAsyncMethod(MethodInfo executeMethod)
+        {
+            AsyncStateMachineAttribute attrib = executeMethod.GetCustomAttribute<AsyncStateMachineAttribute>();
+            return (attrib != null);
         }
     }
 }

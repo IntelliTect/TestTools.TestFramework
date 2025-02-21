@@ -1,5 +1,6 @@
 ﻿using IntelliTect.TestTools.TestFramework.Tests.TestData.Dependencies;
 using IntelliTect.TestTools.TestFramework.Tests.TestData.TestBlocks;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
@@ -13,7 +14,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
         // Do we need to test returning a null type?
 
         [Fact]
-        public void ExecuteTestWithAvailableInstanceForExecuteArg()
+        public async Task ExecuteTestWithAvailableInstanceForExecuteArg()
         {
             // Arrange
             TestCase tc = new TestBuilder()
@@ -22,14 +23,14 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .Build();
 
             // Act
-            tc.Execute();
+            await tc.Execute();
 
             // Assert
             Assert.True(tc.Passed);
         }
 
         [Fact]
-        public void ExecuteTestWithAvailableInstanceForTestBlockProperty()
+        public async Task ExecuteTestWithAvailableInstanceForTestBlockProperty()
         {
             // Arrange
             TestCase tc = new TestBuilder()
@@ -38,14 +39,14 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .Build();
 
             // Act
-            tc.Execute();
+            await tc.Execute();
 
             // Assert
             Assert.True(tc.Passed);
         }
 
         [Fact]
-        public void ExecuteTestWithAvailableInstanceForTestBlockConstructor()
+        public async Task ExecuteTestWithAvailableInstanceForTestBlockConstructor()
         {
             // Arrange
             TestCase tc = new TestBuilder()
@@ -54,14 +55,14 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .Build();
 
             // Act
-            tc.Execute();
+            await tc.Execute();
 
             // Assert
             Assert.True(tc.Passed);
         }
 
         [Fact]
-        public void ExecuteTestBlockWitNonSettablePropertyDoesNotThrow()
+        public async Task ExecuteTestBlockWitNonSettablePropertyDoesNotThrow()
         {
             // Arrange
             TestCase tc = new TestBuilder()
@@ -70,7 +71,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .Build();
 
             // Act
-            tc.Execute();
+            await tc.Execute();
 
             // Assert
             Assert.True(tc.Passed);
@@ -80,7 +81,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
         // The purpose is just to ensure that these methods don't ever accidentally get decoupled from the underlying MS service provider.
         // That is also why we aren't extensively testing the same scenarios as above for the AddDependencyService method
         [Fact]
-        public void ExecuteTestWithAvailableServiceForExecuteArg()
+        public async Task ExecuteTestWithAvailableServiceForExecuteArg()
         {
             // Arrange
             TestCase tc = new TestBuilder()
@@ -89,14 +90,14 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .Build();
 
             // Act
-            tc.Execute();
+            await tc.Execute();
 
             // Assert
             Assert.True(tc.Passed);
         }
 
         [Fact]
-        public void ExecuteTestWithAvailableGenericArgumentAndInstanceForExecuteArg()
+        public async Task ExecuteTestWithAvailableGenericArgumentAndInstanceForExecuteArg()
         {
             // Arrange
             TestCase tc = new TestBuilder()
@@ -105,14 +106,14 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .Build();
 
             // Act
-            tc.Execute();
+            await tc.Execute();
 
             // Assert
             Assert.True(tc.Passed);
         }
 
         [Fact]
-        public void ExecuteTestWithAvailableGenericArgumentsForExecuteArg()
+        public async Task ExecuteTestWithAvailableGenericArgumentsForExecuteArg()
         {
             // Arrange
             TestCase tc = new TestBuilder()
@@ -121,14 +122,14 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .Build();
 
             // Act
-            tc.Execute();
+            await tc.Execute();
 
             // Assert
             Assert.True(tc.Passed);
         }
 
         [Fact]
-        public void ExecuteTestWithAvailableFactoryForExecuteArg()
+        public async Task ExecuteTestWithAvailableFactoryForExecuteArg()
         {
             // Arrange
             TestCase tc = new TestBuilder()
@@ -137,7 +138,38 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .Build();
 
             // Act
-            tc.Execute();
+            await tc.Execute();
+
+            // Assert
+            Assert.True(tc.Passed);
+        }
+
+        [Fact]
+        public async Task ExecuteAsyncTestBlockPasses()
+        {
+            // Arrange
+            TestCase tc = new TestBuilder()
+                .AddTestBlock<ExampleAsyncBlockWithNoReturn>()
+                .Build();
+
+            // Act
+            await tc.Execute();
+
+            // Assert
+            Assert.True(tc.Passed);
+        }
+
+        [Fact]
+        public async Task ExecuteAsyncTestBlockProperlyPassesReturn()
+        {
+            // Arrange
+            TestCase tc = new TestBuilder()
+                .AddTestBlock<ExampleAsyncBlockWithReturn>()
+                .AddFinallyBlock<ExampleFinallyBlock>()
+                .Build();
+
+            // Act
+            await tc.Execute();
 
             // Assert
             Assert.True(tc.Passed);

@@ -1,6 +1,7 @@
 ﻿using IntelliTect.TestTools.TestFramework.Tests.TestData.Dependencies;
 using IntelliTect.TestTools.TestFramework.Tests.TestData.TestBlocks;
 using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
@@ -9,7 +10,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
     {
 
         [Fact]
-        public void FinallyBlockThrowsExpectedExceptionWhenNotOverridingDefaultFinallyBehavior()
+        public async Task FinallyBlockThrowsExpectedExceptionWhenNotOverridingDefaultFinallyBehavior()
         {
             // Arrange
             TestCase tc = new TestBuilder()
@@ -19,7 +20,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .Build();
 
             // Act
-            var ex = Assert.Throws<AggregateException>(() => tc.Execute());
+            var ex = await Assert.ThrowsAsync<AggregateException>(() => tc.Execute());
 
             // Assert
             Assert.NotNull(ex.InnerExceptions);
@@ -31,7 +32,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
         }
 
         [Fact]
-        public void TestBlockAndFinallyBlockThrowsExpectedExceptionWhenNotOverridingDefaultFinallyBehavior()
+        public async Task TestBlockAndFinallyBlockThrowsExpectedExceptionWhenNotOverridingDefaultFinallyBehavior()
         {
             // Arrange
             TestCase tc = new TestBuilder()
@@ -41,7 +42,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .Build();
 
             // Act
-            var ex = Assert.Throws<AggregateException>(() => tc.Execute());
+            var ex = await Assert.ThrowsAsync<AggregateException>(() => tc.Execute());
 
             // Assert
             Assert.NotNull(ex.InnerExceptions);
@@ -53,7 +54,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
         }
 
         [Fact]
-        public void FinallyBlockDoesNotThrowExceptionWhenOverridingDefaultFinallyBehavior()
+        public async Task FinallyBlockDoesNotThrowExceptionWhenOverridingDefaultFinallyBehavior()
         {
             // Arrange
             TestCase tc = new TestBuilder()
@@ -64,14 +65,14 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
             tc.ThrowOnFinallyBlockException = false;
 
             // Act
-            tc.Execute();
+            await tc.Execute();
 
             // Assert
             Assert.True(tc.Passed, "Test case did not get marked as Passed when we expected it.");
         }
 
         [Fact]
-        public void OnlyTestBlockThrowsExpectedExceptionWhenOverridingDefaultFinallyBehavior()
+        public async Task OnlyTestBlockThrowsExpectedExceptionWhenOverridingDefaultFinallyBehavior()
         {
             // Arrange
             TestCase tc = new TestBuilder()
@@ -82,7 +83,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
             tc.ThrowOnFinallyBlockException = false;
 
             // Act
-            Assert.Throws<TestCaseException>(() => tc.Execute());
+            await Assert.ThrowsAsync<TestCaseException>(() => tc.Execute());
 
             // Assert
             Assert.False(tc.Passed, "Test case did not get marked as Failed when we expected it.");

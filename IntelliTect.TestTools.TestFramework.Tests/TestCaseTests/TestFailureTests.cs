@@ -1,6 +1,7 @@
 ﻿using IntelliTect.TestTools.TestFramework.Tests.TestData.Dependencies;
 using IntelliTect.TestTools.TestFramework.Tests.TestData.TestBlocks;
 using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
@@ -8,7 +9,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
     public class TestFailureTests
     {
         [Fact]
-        public void TestFailureThrowsImmediatelyWithOriginalException()
+        public async Task TestFailureThrowsImmediatelyWithOriginalException()
         {
             TestBuilder builder = new();
             TestCase tc = builder
@@ -18,7 +19,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .AddTestBlock<ExampleTestBlockWithMultipleDependencies>(1)
                 .Build();
 
-            var ex = Assert.Throws<TestCaseException>(() => tc.Execute());
+            var ex = await Assert.ThrowsAsync<TestCaseException>(() => tc.Execute());
             Assert.False(tc.Passed);
             Assert.NotNull(ex.InnerException);
             Assert.IsType<DivideByZeroException>(ex.InnerException);
@@ -26,7 +27,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
         }
 
         [Fact]
-        public void DependencyWithMissingDependencyThrowsOriginalError()
+        public async Task DependencyWithMissingDependencyThrowsOriginalError()
         {
             TestCase tc = new TestBuilder()
                 .AddDependencyService<AlwaysThrow>(new ExampleFactory().Throws)
@@ -34,7 +35,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .AddTestBlock<SomeTestBlock>()
                 .Build();
 
-            var ex = Assert.Throws<TestCaseException>(() => tc.Execute());
+            var ex = await Assert.ThrowsAsync<TestCaseException>(() => tc.Execute());
             Assert.False(tc.Passed);
             Assert.NotNull(ex.InnerException);
             Assert.IsType<InvalidOperationException>(ex.InnerException);
