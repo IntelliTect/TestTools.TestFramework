@@ -3,23 +3,19 @@ using OpenQA.Selenium.Chrome;
 using System;
 using System.IO;
 
-namespace ExampleTests
+namespace ExampleTests;
+
+public class WebDriverFactory
 {
-    public class WebDriverFactory
+    public WebDriverFactory(string browserType)
     {
-        public WebDriverFactory(string browserType)
-        {
-            _BrowserType = browserType;
-            Driver = GetWebDriver;
-        }
+        Driver = GetWebDriver;
+    }
 
-        public Func<IServiceProvider, IWebDriver> Driver { get; private set; }
+    public Func<IServiceProvider, IWebDriver> Driver { get; private set; }
 
-        private IWebDriver GetWebDriver(IServiceProvider service)
-        {
-            return new ChromeDriver(Directory.GetCurrentDirectory());
-        }
-
-        private string _BrowserType;
+    private IWebDriver GetWebDriver(IServiceProvider service)
+    {
+        return new ChromeDriver(Directory.GetCurrentDirectory());
     }
 }
