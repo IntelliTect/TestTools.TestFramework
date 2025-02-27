@@ -57,7 +57,29 @@ Each test block can:
 
 This is a simple example, and frankly would be easier as its own unit test. TestFramework shines, though, when dependencies start to become complex. While agnostic to unit, database, API, or UI testing, particularly complex API and UI testing is where we most commonly implement Test Framework. If we were to convert this to do something more interesting, we can start to see how to configure tests for different scenarios in a more interesting fashion.
 
-IN PROGRESS
+If we take a more complex example, in this case still a relatively simple Selenium test, you can compose something like this:
 
+```
+[Fact]
+public void Test1()
+{
+   var expectedResult = new SiteStatus
+   {
+      IsHeaderAvailable = true,
+      IsBodyAvailable = true
+   };
 
-Example projects at https://github.com/IntelliTect/TestTools
+   TestBuilder builder = new();
+   builder
+      .AddLogger<NewLogger>()
+      .AddDependencyService<IWebDriver>(new WebDriverFactory("Chrome").Driver)
+      .AddDependencyService<Harness.IntelliTectWebpage>()
+      .AddTestBlock<TestBlocks.NavigateToWebsite>()
+      .AddTestBlock<TestBlocks.VerifyWebsiteBodyIsDisplayed>(expectedResult)
+      .ExecuteTestCase();
+}
+```
+
+This takes care of needing to have code in the test to wire up the logger, Selenium / WebDriver, and will produce errors if you (for example) add a test black that needs a dependency that isn't supplied by the test. This gives you an easy way to move complex code out of your tests and expose human-readable hooks for composing tests. 
+
+See the full code here: [Example Tests](https://github.com/IntelliTect/TestTools.TestFramework/tree/update-docs/ExampleTests/ExampleTests)
