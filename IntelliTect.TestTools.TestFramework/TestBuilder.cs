@@ -60,7 +60,15 @@ namespace IntelliTect.TestTools.TestFramework
         /// <returns>This</returns>
         public TestBuilder AddTestBlock<T>(params object[] testBlockArgs) where T : ITestBlock
         {
-            Block tb = CreateBlock<T>(false, testBlockArgs);
+            Block tb = CreateBlock<T>(testBlockArgs);
+            TestBlocks.Add(tb);
+            return this;
+        }
+
+        public TestBuilder AddAsyncTestBlock<T>(params object[] testBlockArgs) where T : ITestBlock
+        {
+            Block tb = CreateBlock<T>(testBlockArgs);
+            tb.IsAsync = true;
             TestBlocks.Add(tb);
             return this;
         }
@@ -73,8 +81,18 @@ namespace IntelliTect.TestTools.TestFramework
         /// <returns></returns>
         public TestBuilder AddFinallyBlock<T>(params object[] finallyBlockArgs) where T : ITestBlock
         {
-            Block fb = CreateBlock<T>(true, finallyBlockArgs);
+            Block fb = CreateBlock<T>(finallyBlockArgs);
+            fb.IsFinallyBlock = true;
             FinallyBlocks.Add(fb);
+            return this;
+        }
+
+        public TestBuilder AddAsyncFinallyBlock<T>(params object[] testBlockArgs) where T : ITestBlock
+        {
+            Block fb = CreateBlock<T>(testBlockArgs);
+            fb.IsFinallyBlock = true;
+            fb.IsAsync = true;
+            TestBlocks.Add(fb);
             return this;
         }
 
@@ -204,7 +222,7 @@ namespace IntelliTect.TestTools.TestFramework
             return testCase;
         }
 
-        private Block CreateBlock<T>(bool isFinally, params object[] args)
+        private Block CreateBlock<T>(params object[] args)
         {
             Services.AddTransient(typeof(T));
 
@@ -221,8 +239,7 @@ namespace IntelliTect.TestTools.TestFramework
                     b.ExecuteArgumentOverrides.Add(a.GetType(), a);
                 }
             }
-            b.IsFinallyBlock = isFinally;
-            b.IsAsync = IsAsyncMethod(b.ExecuteMethod);
+
             return b;
         }
 
@@ -342,12 +359,6 @@ namespace IntelliTect.TestTools.TestFramework
                     ValidationExceptions.Add(new InvalidOperationException(errorMessage));
                 }
             }
-        }
-
-        private static bool IsAsyncMethod(MethodInfo executeMethod)
-        {
-            AsyncStateMachineAttribute attrib = executeMethod.GetCustomAttribute<AsyncStateMachineAttribute>();
-            return (attrib != null);
         }
     }
 }

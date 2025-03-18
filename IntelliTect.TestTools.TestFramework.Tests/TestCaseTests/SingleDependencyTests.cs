@@ -23,7 +23,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .Build();
 
             // Act
-            await tc.Execute();
+            await tc.ExecuteAsync();
 
             // Assert
             Assert.True(tc.Passed);
@@ -39,7 +39,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .Build();
 
             // Act
-            await tc.Execute();
+            await tc.ExecuteAsync();
 
             // Assert
             Assert.True(tc.Passed);
@@ -55,7 +55,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .Build();
 
             // Act
-            await tc.Execute();
+            await tc.ExecuteAsync();
 
             // Assert
             Assert.True(tc.Passed);
@@ -71,7 +71,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .Build();
 
             // Act
-            await tc.Execute();
+            await tc.ExecuteAsync();
 
             // Assert
             Assert.True(tc.Passed);
@@ -90,7 +90,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .Build();
 
             // Act
-            await tc.Execute();
+            await tc.ExecuteAsync();
 
             // Assert
             Assert.True(tc.Passed);
@@ -106,7 +106,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .Build();
 
             // Act
-            await tc.Execute();
+            await tc.ExecuteAsync();
 
             // Assert
             Assert.True(tc.Passed);
@@ -122,7 +122,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .Build();
 
             // Act
-            await tc.Execute();
+            await tc.ExecuteAsync();
 
             // Assert
             Assert.True(tc.Passed);
@@ -138,7 +138,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .Build();
 
             // Act
-            await tc.Execute();
+            await tc.ExecuteAsync();
 
             // Assert
             Assert.True(tc.Passed);
@@ -153,7 +153,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .Build();
 
             // Act
-            await tc.Execute();
+            await tc.ExecuteAsync();
 
             // Assert
             Assert.True(tc.Passed);
@@ -164,12 +164,12 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
         {
             // Arrange
             TestCase tc = new TestBuilder()
-                .AddTestBlock<ExampleAsyncBlockWithReturn>()
+                .AddAsyncTestBlock<ExampleAsyncBlockWithReturn>()
                 .AddFinallyBlock<ExampleFinallyBlock>()
                 .Build();
 
             // Act
-            await tc.Execute();
+            await tc.ExecuteAsync();
 
             // Assert
             Assert.True(tc.Passed);

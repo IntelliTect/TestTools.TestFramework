@@ -146,7 +146,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestBuilderTests
                 .Build();
 
             // Act
-            await Assert.ThrowsAsync<TestCaseException>(() => tc.Execute());
+            await Assert.ThrowsAsync<TestCaseException>(() => tc.ExecuteAsync());
 
             // Assert
             Assert.False(tc.Passed);
@@ -162,7 +162,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestBuilderTests
                 .Build();
 
             // Act
-            await tc.Execute();
+            await tc.ExecuteAsync();
 
             // Assert
             Assert.True(tc.Passed);

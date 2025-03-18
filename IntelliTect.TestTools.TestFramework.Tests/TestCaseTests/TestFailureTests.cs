@@ -19,7 +19,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .AddTestBlock<ExampleTestBlockWithMultipleDependencies>(1)
                 .Build();
 
-            var ex = await Assert.ThrowsAsync<TestCaseException>(() => tc.Execute());
+            var ex = await Assert.ThrowsAsync<TestCaseException>(() => tc.ExecuteAsync());
             Assert.False(tc.Passed);
             Assert.NotNull(ex.InnerException);
             Assert.IsType<DivideByZeroException>(ex.InnerException);
@@ -35,7 +35,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .AddTestBlock<SomeTestBlock>()
                 .Build();
 
-            var ex = await Assert.ThrowsAsync<TestCaseException>(() => tc.Execute());
+            var ex = await Assert.ThrowsAsync<TestCaseException>(() => tc.ExecuteAsync());
             Assert.False(tc.Passed);
             Assert.NotNull(ex.InnerException);
             Assert.IsType<InvalidOperationException>(ex.InnerException);

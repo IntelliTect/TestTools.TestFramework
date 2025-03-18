@@ -20,7 +20,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .Build();
 
             // Act
-            var ex = await Assert.ThrowsAsync<AggregateException>(() => tc.Execute());
+            var ex = await Assert.ThrowsAsync<AggregateException>(() => tc.ExecuteAsync());
 
             // Assert
             Assert.NotNull(ex.InnerExceptions);
@@ -42,7 +42,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .Build();
 
             // Act
-            var ex = await Assert.ThrowsAsync<AggregateException>(() => tc.Execute());
+            var ex = await Assert.ThrowsAsync<AggregateException>(() => tc.ExecuteAsync());
 
             // Assert
             Assert.NotNull(ex.InnerExceptions);
@@ -65,7 +65,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
             tc.ThrowOnFinallyBlockException = false;
 
             // Act
-            await tc.Execute();
+            await tc.ExecuteAsync();
 
             // Assert
             Assert.True(tc.Passed, "Test case did not get marked as Passed when we expected it.");
@@ -83,7 +83,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
             tc.ThrowOnFinallyBlockException = false;
 
             // Act
-            await Assert.ThrowsAsync<TestCaseException>(() => tc.Execute());
+            await Assert.ThrowsAsync<TestCaseException>(() => tc.ExecuteAsync());
 
             // Assert
             Assert.False(tc.Passed, "Test case did not get marked as Failed when we expected it.");
