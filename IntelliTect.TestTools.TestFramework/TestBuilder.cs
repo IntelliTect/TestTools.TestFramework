@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 
 namespace IntelliTect.TestTools.TestFramework
 {
@@ -65,6 +64,13 @@ namespace IntelliTect.TestTools.TestFramework
             return this;
         }
 
+        /// <summary>
+        /// Adds a test block (some related group of test actions) that includes asynchronous code with an optional list of arguments.<br />
+        /// Any argument passed here will override all other matched arguments for the blocks TestBlock.Execute() method.
+        /// </summary>
+        /// <typeparam name="T">The type of dependency a test block needs to execute.</typeparam>
+        /// <param name="testBlockArgs">The list of arguments to fulfill a set of Execute(params object[]) parameters.</param>
+        /// <returns>This</returns>
         public TestBuilder AddAsyncTestBlock<T>(params object[] testBlockArgs) where T : ITestBlock
         {
             Block tb = CreateBlock<T>(testBlockArgs);
@@ -78,7 +84,7 @@ namespace IntelliTect.TestTools.TestFramework
         /// </summary>
         /// <typeparam name="T">The type of dependency a test block needs to execute.</typeparam>
         /// <param name="finallyBlockArgs">The list of arguments to fulfill a set of Execute(params object[]) parameters.</param>
-        /// <returns></returns>
+        /// <returns>This</returns>
         public TestBuilder AddFinallyBlock<T>(params object[] finallyBlockArgs) where T : ITestBlock
         {
             Block fb = CreateBlock<T>(finallyBlockArgs);
@@ -87,6 +93,12 @@ namespace IntelliTect.TestTools.TestFramework
             return this;
         }
 
+        /// <summary>
+        /// Adds a finally block, a special test block that includes asynchronous code that will always run after all test blocks, regardless of if a prior test block fails.
+        /// </summary>
+        /// <typeparam name="T">The type of dependency a test block needs to execute.</typeparam>
+        /// <param name="finallyBlockArgs">The list of arguments to fulfill a set of Execute(params object[]) parameters.</param>
+        /// <returns>This</returns>
         public TestBuilder AddAsyncFinallyBlock<T>(params object[] testBlockArgs) where T : ITestBlock
         {
             Block fb = CreateBlock<T>(testBlockArgs);

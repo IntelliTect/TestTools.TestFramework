@@ -56,6 +56,11 @@ namespace IntelliTect.TestTools.TestFramework
         // Has this test case passed? Will only be true if every regular test block succeeds.
         public bool Passed { get; set; }
 
+        /// <summary>
+        /// Executes the test case.
+        /// </summary>
+        /// <exception cref="TestCaseException">The exception describing a test failure.</exception>
+        /// <exception cref="AggregateException">Occurs when finally blocks fail, or the test fails and at least one finally block fails.</exception>
         public void Execute()
         {
             ExecuteAsync().ConfigureAwait(false).GetAwaiter().GetResult();
