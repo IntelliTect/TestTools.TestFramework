@@ -334,7 +334,7 @@ namespace IntelliTect.TestTools.TestFramework
             }
 
             Type executeReturns = tb.ExecuteMethod.ReturnType;
-            // Or would it be better to check if the return type implements IAsyncResult?
+            
             if (tb.IsAsync)
             {
                 if (executeReturns.GenericTypeArguments.Any())
