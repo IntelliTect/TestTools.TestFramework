@@ -55,13 +55,13 @@ namespace IntelliTect.TestTools.TestFramework
         public bool Passed { get; set; }
 
         /// <summary>
-        /// Executes the test case.
+        /// Legacy method signature. Executes the test case. NOTE: Prefer to use ExecuteAsync, even if you have no awaitable test blocks.
         /// </summary>
         /// <exception cref="TestCaseException">The exception describing a test failure.</exception>
         /// <exception cref="AggregateException">Occurs when finally blocks fail, or the test fails and at least one finally block fails.</exception>
         public void Execute()
         {
-            Task.Run(() => ExecuteAsync()).GetResult();
+            Task.Run(ExecuteAsync).Wait();
         }
 
         /// <summary>
