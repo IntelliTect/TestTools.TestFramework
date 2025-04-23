@@ -83,3 +83,41 @@ public void Test1()
 This takes care of needing to have code in the test to wire up the logger, Selenium / WebDriver, and will produce errors if you (for example) add a test black that needs a dependency that isn't supplied by the test. This gives you an easy way to move complex code out of your tests and expose human-readable hooks for composing tests. 
 
 See the full code here: [Example Tests](https://github.com/IntelliTect/TestTools.TestFramework/tree/update-docs/ExampleTests/ExampleTests)
+
+Async/Await
+-----
+TestFramework now supports test blocks that need to be awaited. Please be aware that deviating that from the standard async/await with Task or Task<T> return types can result in unexpected behavior. If you encounter these scenarios, please file an issue so we can look into it.
+
+For ease of use and explicit test authoring, there is a method to tell TestFramework if a TestBlock is awaitable. Let's say you have the following test block:
+
+```
+using IntelliTect.TestTools.TestFramework;
+
+namespace ExampleTests.TestBlocks;
+
+internal class VerifyAwait : ITestBlock
+{
+   public async Task Execute()
+   {
+      await Task.Delay(1);
+   }
+}
+```
+
+To properly await this, you would build and execute your test case like so:
+```
+[Fact]
+public void Test1()
+{
+   TestBuilder builder = new();
+
+   builder.AddAsyncTestBlock<TestBlocks.VerifyAwait>()
+
+   TestCase test = builder.Build()
+   test.ExecuteAsync();
+}
+```
+
+Also note that current behavior is that TestFramework will take the result of the awaited test block task and use that for future test block dependencies. If you have a test block that returns Task<bool>, TestFramework will capture the bool result to use.
+
+More in depth examples are coming later!
