@@ -61,7 +61,7 @@ namespace IntelliTect.TestTools.TestFramework
         /// <exception cref="AggregateException">Occurs when finally blocks fail, or the test fails and at least one finally block fails.</exception>
         public void Execute()
         {
-            ExecuteAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+            Task.Run(() => ExecuteAsync()).GetResult();
         }
 
         /// <summary>
