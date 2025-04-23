@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace IntelliTect.TestTools.TestFramework.Tests.TestData.Dependencies
@@ -106,6 +107,22 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestData.Dependencies
         public void Execute(bool result)
         {
             Assert.True(result, "This is an expected failure.");
+        }
+    }
+
+    public class ExampleAsyncBlockWithReturn : TestBlock
+    {
+        public async Task<bool> Execute()
+        {
+            return await Task.Run(() => true);
+        }
+    }
+
+    public class ExampleAsyncBlockWithNoReturn : TestBlock
+    {
+        public async Task Execute()
+        {
+            await Task.Delay(1);
         }
     }
 }

@@ -1,23 +1,27 @@
-﻿using Xunit;
+﻿using System.Threading.Tasks;
+using Xunit;
 
 namespace IntelliTect.TestTools.TestFramework.Tests.TestBuilderTests
 {
     public class LoggerTests
     {
         [Fact]
-        public void DefaultLoggerIsAddedOnCreate()
+        public async Task DefaultLoggerIsAddedOnCreate()
         {
             // Arrange
             TestCase tc = new TestBuilder()
                 .AddTestBlock<DefaultLogBlock>()
                 .Build();
 
-            // Act / Assert
-            tc.Execute();
+            // Act
+            await tc.ExecuteAsync();
+
+            // Assert
+            Assert.True(tc.Passed);
         }
 
         [Fact]
-        public void RemovedLoggerDoesNotThrowWhenAttemptingToActivateProp()
+        public async Task RemovedLoggerDoesNotThrowWhenAttemptingToActivateProp()
         {
             // Arrange
             TestCase tc = new TestBuilder()
@@ -25,12 +29,15 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestBuilderTests
                 .AddTestBlock<RemovedLogBlockProp>()
                 .Build();
 
-            // Act / Assert
-            tc.Execute();
+            // Act
+            await tc.ExecuteAsync();
+
+            // Assert
+            Assert.True(tc.Passed);
         }
 
         [Fact]
-        public void RemovedLoggerDoesNotThrowWhenAttemptingToActivateCtor()
+        public async Task RemovedLoggerDoesNotThrowWhenAttemptingToActivateCtor()
         {
             // Arrange
             TestCase tc = new TestBuilder()
@@ -38,12 +45,15 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestBuilderTests
                 .AddTestBlock<RemovedLogBlockCtor>()
                 .Build();
 
-            // Act / Assert
-            tc.Execute();
+            // Act
+            await tc.ExecuteAsync();
+
+            // Assert
+            Assert.True(tc.Passed);
         }
 
         [Fact]
-        public void RemovedLoggerDoesNotThrowWhenAttemptingToActivateExecuteArg()
+        public async Task RemovedLoggerDoesNotThrowWhenAttemptingToActivateExecuteArg()
         {
             // Arrange
             TestCase tc = new TestBuilder()
@@ -51,12 +61,15 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestBuilderTests
                 .AddTestBlock<RemovedLogBlockExecuteArg>()
                 .Build();
 
-            // Act / Assert
-            tc.Execute();
+            // Act
+            await tc.ExecuteAsync();
+
+            // Assert
+            Assert.True(tc.Passed);
         }
 
         [Fact]
-        public void CustomLoggerAddsWithoutError()
+        public async Task CustomLoggerAddsWithoutError()
         {
             // Arrange
             TestCase tc = new TestBuilder()
@@ -64,12 +77,15 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestBuilderTests
                 .AddTestBlock<CustomLogBlock>()
                 .Build();
 
-            // Act / Assert
-            tc.Execute();
+            // Act
+            await tc.ExecuteAsync();
+
+            // Assert
+            Assert.True(tc.Passed);
         }
 
         [Fact]
-        public void RemovingLoggerTwiceDoesNotThrow()
+        public async Task RemovingLoggerTwiceDoesNotThrow()
         {
             // Arrange
             TestCase tc = new TestBuilder()
@@ -78,12 +94,15 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestBuilderTests
                 .AddTestBlock<RemovedLogBlockProp>()
                 .Build();
 
-            // Act / Assert
-            tc.Execute();
+            // Act
+            await tc.ExecuteAsync();
+
+            // Assert
+            Assert.True(tc.Passed);
         }
 
         [Fact]
-        public void AddingLoggerThanRemovingDoesNotThrow()
+        public async Task AddingLoggerThanRemovingDoesNotThrow()
         {
             // Arrange
             TestCase tc = new TestBuilder()
@@ -92,8 +111,11 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestBuilderTests
                 .AddTestBlock<RemovedLogBlockProp>()
                 .Build();
 
-            // Act / Assert
-            tc.Execute();
+            // Act
+            await tc.ExecuteAsync();
+
+            // Assert
+            Assert.True(tc.Passed);
         }
     }
 

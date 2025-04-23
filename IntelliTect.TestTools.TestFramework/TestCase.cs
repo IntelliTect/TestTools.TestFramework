@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace IntelliTect.TestTools.TestFramework
 {
@@ -54,11 +55,21 @@ namespace IntelliTect.TestTools.TestFramework
         public bool Passed { get; set; }
 
         /// <summary>
-        /// Executes the test case.
+        /// Legacy method signature. Executes the test case. NOTE: Prefer to use ExecuteAsync, even if you have no awaitable test blocks.
         /// </summary>
         /// <exception cref="TestCaseException">The exception describing a test failure.</exception>
         /// <exception cref="AggregateException">Occurs when finally blocks fail, or the test fails and at least one finally block fails.</exception>
         public void Execute()
+        {
+            Task.Run(ExecuteAsync).Wait();
+        }
+
+        /// <summary>
+        /// Executes the test case.
+        /// </summary>
+        /// <exception cref="TestCaseException">The exception describing a test failure.</exception>
+        /// <exception cref="AggregateException">Occurs when finally blocks fail, or the test fails and at least one finally block fails.</exception>
+        public async Task ExecuteAsync()
         {
             ServiceProvider services = ServiceCollection.BuildServiceProvider();
             using (var testCaseScope = services.CreateScope())
@@ -80,7 +91,8 @@ namespace IntelliTect.TestTools.TestFramework
                     if (!TrySetBlockProperties(testCaseScope, tb, testBlockInstance)) break;
                     if (!TryGetExecuteArguments(testCaseScope, tb, out List<object?> executeArgs)) break;
 
-                    if (!TryRunBlock(tb, testBlockInstance, executeArgs))
+                    bool runSuccess = await TryRunBlock(tb, testBlockInstance, executeArgs);
+                    if (!runSuccess)
                     {
                         if (TestBlockException is null)
                         {
@@ -101,7 +113,8 @@ namespace IntelliTect.TestTools.TestFramework
                     if (!TrySetBlockProperties(testCaseScope, fb, finallyBlockInstance)) continue;
                     if (!TryGetExecuteArguments(testCaseScope, fb, out List<object?> executeArgs)) continue;
 
-                    if (!TryRunBlock(fb, finallyBlockInstance, executeArgs))
+                    bool runSuccess = await TryRunBlock(fb, finallyBlockInstance, executeArgs);
+                    if (!runSuccess)
                     {
                         Log?.Critical($"Finally block failed: {FinallyBlockExceptions.LastOrDefault()}");
                     }
@@ -349,7 +362,7 @@ namespace IntelliTect.TestTools.TestFramework
             return obj;
         }
 
-        private bool TryRunBlock(Block block, object blockInstance, List<object?> executeArgs)
+        private async Task<bool> TryRunBlock(Block block, object blockInstance, List<object?> executeArgs)
         {
             bool result = false;
 
@@ -361,7 +374,21 @@ namespace IntelliTect.TestTools.TestFramework
 
             try
             {
-                object? output = block.ExecuteMethod.Invoke(blockInstance, executeArgs.ToArray());
+                object? output = null;
+                if (block.IsAsync)
+                {
+                    dynamic asyncOutput = block.ExecuteMethod.Invoke(blockInstance, executeArgs.ToArray());
+                    await asyncOutput;
+                    if(block.AsyncReturnType != typeof(void))
+                    {
+                        output = asyncOutput.GetAwaiter().GetResult();
+                    }
+                }
+                else
+                {
+                    output = block.ExecuteMethod.Invoke(blockInstance, executeArgs.ToArray());
+                }
+                
                 if (output is not null)
                 {
                     Log?.TestBlockOutput(output);
