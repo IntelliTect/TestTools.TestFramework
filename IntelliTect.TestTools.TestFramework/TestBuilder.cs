@@ -59,7 +59,22 @@ namespace IntelliTect.TestTools.TestFramework
         /// <returns>This</returns>
         public TestBuilder AddTestBlock<T>(params object[] testBlockArgs) where T : ITestBlock
         {
-            Block tb = CreateBlock<T>(false, testBlockArgs);
+            Block tb = CreateBlock<T>(testBlockArgs);
+            TestBlocks.Add(tb);
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a test block (some related group of test actions) that includes asynchronous code with an optional list of arguments.<br />
+        /// Any argument passed here will override all other matched arguments for the blocks TestBlock.Execute() method.
+        /// </summary>
+        /// <typeparam name="T">The type of dependency a test block needs to execute.</typeparam>
+        /// <param name="testBlockArgs">The list of arguments to fulfill a set of Execute(params object[]) parameters.</param>
+        /// <returns>This</returns>
+        public TestBuilder AddAsyncTestBlock<T>(params object[] testBlockArgs) where T : ITestBlock
+        {
+            Block tb = CreateBlock<T>(testBlockArgs);
+            tb.IsAsync = true;
             TestBlocks.Add(tb);
             return this;
         }
@@ -69,11 +84,27 @@ namespace IntelliTect.TestTools.TestFramework
         /// </summary>
         /// <typeparam name="T">The type of dependency a test block needs to execute.</typeparam>
         /// <param name="finallyBlockArgs">The list of arguments to fulfill a set of Execute(params object[]) parameters.</param>
-        /// <returns></returns>
+        /// <returns>This</returns>
         public TestBuilder AddFinallyBlock<T>(params object[] finallyBlockArgs) where T : ITestBlock
         {
-            Block fb = CreateBlock<T>(true, finallyBlockArgs);
+            Block fb = CreateBlock<T>(finallyBlockArgs);
+            fb.IsFinallyBlock = true;
             FinallyBlocks.Add(fb);
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a finally block, a special test block that includes asynchronous code that will always run after all test blocks, regardless of if a prior test block fails.
+        /// </summary>
+        /// <typeparam name="T">The type of dependency a test block needs to execute.</typeparam>
+        /// <param name="finallyBlockArgs">The list of arguments to fulfill a set of Execute(params object[]) parameters.</param>
+        /// <returns>This</returns>
+        public TestBuilder AddAsyncFinallyBlock<T>(params object[] testBlockArgs) where T : ITestBlock
+        {
+            Block fb = CreateBlock<T>(testBlockArgs);
+            fb.IsFinallyBlock = true;
+            fb.IsAsync = true;
+            TestBlocks.Add(fb);
             return this;
         }
 
@@ -203,7 +234,7 @@ namespace IntelliTect.TestTools.TestFramework
             return testCase;
         }
 
-        private Block CreateBlock<T>(bool isFinally, params object[] args)
+        private Block CreateBlock<T>(params object[] args)
         {
             Services.AddTransient(typeof(T));
 
@@ -220,7 +251,7 @@ namespace IntelliTect.TestTools.TestFramework
                     b.ExecuteArgumentOverrides.Add(a.GetType(), a);
                 }
             }
-            b.IsFinallyBlock = isFinally;
+
             return b;
         }
 
@@ -303,22 +334,40 @@ namespace IntelliTect.TestTools.TestFramework
             }
 
             Type executeReturns = tb.ExecuteMethod.ReturnType;
+            
+            if (tb.IsAsync)
+            {
+                if (executeReturns.GenericTypeArguments.Any())
+                {
+                    // How do we want to handle multiple type arguments?
+                    // Or maybe we just don't support returning something like Func<string, string, string>?)
+                    executeReturns = executeReturns.GenericTypeArguments.Last();
+                    tb.AsyncReturnType = executeReturns;
+                }
+                else
+                {
+                    // Treat Task like void for now.
+                    // Currently there's no use case for passing Tasks between test blocks.
+                    executeReturns = typeof(void);
+                }
+            }
+
             if (executeReturns != typeof(void))
             {
                 outputs.Add(executeReturns);
             }
         }
 
-        private void CheckContainerForFirstLevelDependency(Type type, List<Type?> outputs, string errorMessage)
+        private void CheckContainerForFirstLevelDependency(Type typeToCheck, List<Type?> testBlockOutputs, string errorMessage)
         {
-            ServiceDescriptor? obj = Services.FirstOrDefault(x => x.ServiceType == type || x.ImplementationType == type);
+            ServiceDescriptor? obj = Services.FirstOrDefault(x => x.ServiceType == typeToCheck || x.ImplementationType == typeToCheck);
             if (obj is null)
             {
-                Type? output = outputs.FirstOrDefault(o => o == type || o == type);
+                Type? output = testBlockOutputs.FirstOrDefault(o => o == typeToCheck || o == typeToCheck);
 
                 if (output is null)
                 {
-                    if (type is ITestCaseLogger) return;
+                    if (typeToCheck is ITestCaseLogger) return;
                     ValidationExceptions.Add(new InvalidOperationException(errorMessage));
                 }
             }
