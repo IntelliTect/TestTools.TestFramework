@@ -107,14 +107,14 @@ internal class VerifyAwait : ITestBlock
 To properly await this, you would build and execute your test case like so:
 ```
 [Fact]
-public void Test1()
+public async Task Test1()
 {
    TestBuilder builder = new();
 
    builder.AddAsyncTestBlock<TestBlocks.VerifyAwait>()
 
    TestCase test = builder.Build()
-   test.ExecuteAsync();
+   await test.ExecuteAsync();
 }
 ```
 
