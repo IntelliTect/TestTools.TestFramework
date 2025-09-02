@@ -422,6 +422,14 @@ namespace IntelliTect.TestTools.TestFramework
                     () => FinallyBlockExceptions.Add(ex)
                 );
             }
+            catch (Exception ex)
+            {
+                HandleFinallyBlock(
+                    block,
+                    () => TestBlockException = ex,
+                    () => FinallyBlockExceptions.Add(ex)
+                );
+            }
 
             if (result) Log?.Debug($"Test block completed successfully.");
             return result;

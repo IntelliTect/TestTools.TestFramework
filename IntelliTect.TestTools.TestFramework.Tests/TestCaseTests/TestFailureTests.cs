@@ -1,5 +1,6 @@
 ﻿using IntelliTect.TestTools.TestFramework.Tests.TestData.Dependencies;
 using IntelliTect.TestTools.TestFramework.Tests.TestData.TestBlocks;
+using Microsoft.Playwright;
 using System;
 using System.Threading.Tasks;
 using Xunit;
@@ -33,6 +34,20 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
                 .AddDependencyService<AlwaysThrow>(new ExampleFactory().Throws)
                 .AddDependencyService<SomeDependency>()
                 .AddTestBlock<SomeTestBlock>()
+                .Build();
+
+            var ex = await Assert.ThrowsAsync<TestCaseException>(() => tc.ExecuteAsync());
+            Assert.False(tc.Passed);
+            Assert.NotNull(ex.InnerException);
+            Assert.IsType<InvalidOperationException>(ex.InnerException);
+            Assert.Contains("oops", ex.InnerException!.Message, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        [Fact]
+        public async Task CgiIssue()
+        {
+            TestCase tc = new TestBuilder()
+                .AddAsyncTestBlock<PlaywrightError>()
                 .Build();
 
             var ex = await Assert.ThrowsAsync<TestCaseException>(() => tc.ExecuteAsync());

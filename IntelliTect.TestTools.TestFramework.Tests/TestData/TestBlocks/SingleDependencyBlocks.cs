@@ -1,5 +1,7 @@
 ﻿using IntelliTect.TestTools.TestFramework.Tests.TestData.Dependencies;
+using Microsoft.Playwright;
 using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace IntelliTect.TestTools.TestFramework.Tests.TestData.TestBlocks
@@ -68,6 +70,19 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestData.TestBlocks
         {
             Assert.NotNull(dep);
             return true;
+        }
+    }
+
+    public class PlaywrightError : TestBlock
+    {
+        public async Task Execute()
+        {
+            await Task.Delay(1);
+            throw new InvalidOperationException("Oops");
+            //using IPlaywright pw = await Playwright.CreateAsync();
+            //IAPIRequestContext context = await pw.APIRequest.NewContextAsync();
+            //await context.GetAsync("http://bad.url.com");
+            // Playwright exception thrown for ENOTFOUND
         }
     }
 }
