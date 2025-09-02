@@ -1,5 +1,4 @@
 ﻿using IntelliTect.TestTools.TestFramework.Tests.TestData.Dependencies;
-using Microsoft.Playwright;
 using System;
 using System.Threading.Tasks;
 using Xunit;
