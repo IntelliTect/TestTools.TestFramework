@@ -43,7 +43,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
         }
 
         [Fact]
-        public async Task CgiIssue()
+        public async Task AsyncBlockThrowsProperlyCatchAndLogException()
         {
             TestCase tc = new TestBuilder()
                 .AddAsyncTestBlock<AsyncError>()
