@@ -46,7 +46,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
         public async Task CgiIssue()
         {
             TestCase tc = new TestBuilder()
-                .AddAsyncTestBlock<PlaywrightError>()
+                .AddAsyncTestBlock<AsyncError>()
                 .Build();
 
             var ex = await Assert.ThrowsAsync<TestCaseException>(() => tc.ExecuteAsync());

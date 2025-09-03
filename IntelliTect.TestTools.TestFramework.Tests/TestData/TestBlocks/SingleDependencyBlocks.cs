@@ -72,16 +72,12 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestData.TestBlocks
         }
     }
 
-    public class PlaywrightError : TestBlock
+    public class AsyncError : TestBlock
     {
         public async Task Execute()
         {
             await Task.Delay(1);
             throw new InvalidOperationException("Oops");
-            //using IPlaywright pw = await Playwright.CreateAsync();
-            //IAPIRequestContext context = await pw.APIRequest.NewContextAsync();
-            //await context.GetAsync("http://bad.url.com");
-            // Playwright exception thrown for ENOTFOUND
         }
     }
 }
