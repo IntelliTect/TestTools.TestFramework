@@ -73,8 +73,7 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
 
             // Assert
             Assert.False(tc.Passed);
-            Assert.NotNull(result.InnerException);
-            Assert.True(result.InnerException.GetType() == typeof(DivideByZeroException));
+            Assert.IsType<DivideByZeroException>(result.InnerException);
         }
     }
 }
