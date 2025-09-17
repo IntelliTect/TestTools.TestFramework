@@ -120,4 +120,15 @@ public async Task Test1()
 
 Also note that current behavior is that TestFramework will take the result of the awaited test block task and use that for future test block dependencies. If you have a test block that returns Task<bool>, TestFramework will capture the bool result to use.
 
+Test Data
+-----
+In normal situations, test blocks typically only return a single datapoint if any data is returned at all. The underlying container picks that object up and uses it for subsequent test blocks like demonstrated in the example project or unit tests. In some cases, it's not feasible to return just a single object, and so the BlockData object can handle returning 2 - 4 different data points. The execute method would look similar to this:
+```
+public BlockData<string, bool> Execute()
+{
+    return new BlockData<string, bool>("Testing", true);
+}
+```
+Note that in the out of the box BlockData objects, it will validate that the types are all unique; otherwise duplicate types would simply overwrite each other and cause unexpected behavior in subsquent block executions.
+
 More in depth examples are coming later!
