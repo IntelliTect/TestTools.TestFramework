@@ -1,5 +1,6 @@
 ﻿using IntelliTect.TestTools.TestFramework.Tests.TestData.Dependencies;
 using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace IntelliTect.TestTools.TestFramework.Tests.TestData.TestBlocks
@@ -68,6 +69,15 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestData.TestBlocks
         {
             Assert.NotNull(dep);
             return true;
+        }
+    }
+
+    public class AsyncError : TestBlock
+    {
+        public async Task Execute()
+        {
+            await Task.Delay(1);
+            throw new InvalidOperationException("Oops");
         }
     }
 }

@@ -41,5 +41,18 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
             Assert.IsType<InvalidOperationException>(ex.InnerException);
             Assert.Contains("oops", ex.InnerException!.Message, StringComparison.InvariantCultureIgnoreCase);
         }
+
+        [Fact]
+        public async Task AsyncBlockThrowsProperlyCatchAndLogException()
+        {
+            TestCase tc = new TestBuilder()
+                .AddAsyncTestBlock<AsyncError>()
+                .Build();
+
+            var ex = await Assert.ThrowsAsync<TestCaseException>(() => tc.ExecuteAsync());
+            Assert.False(tc.Passed);
+            var invalidOp = Assert.IsType<InvalidOperationException>(ex.InnerException);
+            Assert.Contains("oops", invalidOp.Message, StringComparison.InvariantCultureIgnoreCase);
+        }
     }
 }

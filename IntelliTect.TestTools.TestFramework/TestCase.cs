@@ -94,12 +94,9 @@ namespace IntelliTect.TestTools.TestFramework
                     bool runSuccess = await TryRunBlock(tb, testBlockInstance, executeArgs);
                     if (!runSuccess)
                     {
-                        if (TestBlockException is null)
-                        {
-                            TestBlockException = new(
+                        TestBlockException ??= new(
                                 $"Unknown error occurred while running test block {tb}. " +
                                 "Please file an issue: https://github.com/IntelliTect/TestTools.TestFramework/issues");
-                        }
                         break;
                     }
                 }
@@ -122,6 +119,10 @@ namespace IntelliTect.TestTools.TestFramework
 
                 if (TestBlockException is null)
                 {
+                    // Note: This likely needs to be moved up above the finally blocks.
+                    // If a test case "passes" i.e. finishes all of its test blocks, we probably need to know that
+                    //  in the finally blocks.
+                    // Need to think about how to handle "passed" state if a finally block fails.
                     Passed = true;
                     Log?.Info("Test case finished successfully.");
                 }
@@ -420,17 +421,17 @@ namespace IntelliTect.TestTools.TestFramework
                     () => FinallyBlockExceptions.Add(ex.InnerException)
                 );
             }
-            catch (ArgumentException ex)
+            catch (TargetParameterCountException ex)
             {
+                ex.Data.Add("AdditionalInfo", "Test block failed: Mismatched count between Execute method arguments and supplied dependencies.");
                 HandleFinallyBlock(
                     block,
                     () => TestBlockException = ex,
                     () => FinallyBlockExceptions.Add(ex)
                 );
             }
-            catch (TargetParameterCountException ex)
+            catch (Exception ex)
             {
-                ex.Data.Add("AdditionalInfo", "Test block failed: Mismatched count between Execute method arguments and supplied dependencies.");
                 HandleFinallyBlock(
                     block,
                     () => TestBlockException = ex,
