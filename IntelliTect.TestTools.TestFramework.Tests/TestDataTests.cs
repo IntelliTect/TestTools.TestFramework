@@ -12,8 +12,7 @@ public class TestDataTests
         {
             var _ = new BlockData<int, int>(1, 2);
         });
-        Assert.NotNull(exception.InnerException);
-        Assert.Equal(typeof(InvalidOperationException), exception.InnerException.GetType());
+        Assert.IsType<InvalidOperationException>(exception.InnerException);
         Assert.Equal("Duplicate type found: Int32 appears multiple times. BlockData must use different types to avoid unexpected behavior by the TestCase DI Container.",
             exception.InnerException.Message);
     }
@@ -25,10 +24,9 @@ public class TestDataTests
         {
             var _ = new BlockData<int, bool, int>(1, true, 2);
         });
-        Assert.NotNull(exception.InnerException);
-        Assert.Equal(typeof(InvalidOperationException), exception.InnerException.GetType());
+        var invalidOp = Assert.IsType<InvalidOperationException>(exception.InnerException);
         Assert.Equal("Duplicate type found: Int32 appears multiple times. BlockData must use different types to avoid unexpected behavior by the TestCase DI Container.",
-            exception.InnerException.Message);
+            invalidOp.Message);
     }
 
     [Fact]

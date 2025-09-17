@@ -15,7 +15,11 @@ public class BlockData<T1, T2>(T1 data1, T2 data2) : IBlockData
         ValidateData.ValidateUniqueTypes(typeof(T1), typeof(T2));
     }
 
-    public List<KeyValuePair<Type, object?>> Data { get; } = 
+    public T1 Data1 => data1;
+    public T2 Data2 => data2;
+    
+
+    IBlockData.List<KeyValuePair<Type, object?>> Data { get; } = 
     [
         new KeyValuePair<Type, object?>(typeof(T1), data1),
         new KeyValuePair<Type, object?>(typeof(T2), data2)

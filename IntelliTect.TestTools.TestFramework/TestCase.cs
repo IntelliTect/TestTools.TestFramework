@@ -406,8 +406,9 @@ namespace IntelliTect.TestTools.TestFramework
                     else
                     {
                         Log?.TestBlockOutput(output);
-                        BlockOutput.Remove(output.GetType());
-                        BlockOutput.Add(output.GetType(), output);
+                        Type outputType = output.GetType();
+                        BlockOutput.Remove(outputType);
+                        BlockOutput.Add(outputType, output);
                     }
                 }
                 result = true;
