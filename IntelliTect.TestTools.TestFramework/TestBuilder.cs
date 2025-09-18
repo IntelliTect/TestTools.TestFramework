@@ -354,7 +354,18 @@ namespace IntelliTect.TestTools.TestFramework
 
             if (executeReturns != typeof(void))
             {
-                outputs.Add(executeReturns);
+                if (executeReturns.GetInterfaces().Any(x => x == typeof(IBlockData)))
+                {
+                    Type[] blockData = executeReturns.GenericTypeArguments;
+                    foreach (Type bd in blockData)
+                    {
+                        outputs.Add(bd);
+                    }
+                }
+                else
+                {
+                    outputs.Add(executeReturns);
+                }
             }
         }
 

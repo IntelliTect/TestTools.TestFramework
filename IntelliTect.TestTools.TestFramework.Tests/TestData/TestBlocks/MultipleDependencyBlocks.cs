@@ -21,4 +21,12 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestData.TestBlocks
             Assert.Equal(1234, inputNumber);
         }
     }
+
+    public class ExampleBlockWithMultipleReturns : TestBlock
+    {
+        public BlockData<string, bool> Execute(bool returnValue)
+        {
+            return new BlockData<string, bool>("Testing", returnValue);
+        }
+    }
 }

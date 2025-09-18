@@ -142,7 +142,7 @@ namespace IntelliTect.TestTools.TestFramework
             {
                 throw new TestCaseException("Test case failed.", TestBlockException);
             }
-            else if(TestBlockException is not null
+            else if (TestBlockException is not null
                 && ThrowOnFinallyBlockException
                 && FinallyBlockExceptions.Any())
             {
@@ -150,7 +150,7 @@ namespace IntelliTect.TestTools.TestFramework
                 throw new AggregateException("Test case failed and finally blocks failed.",
                     FinallyBlockExceptions);
             }
-            else if(TestBlockException is null
+            else if (TestBlockException is null
                 && ThrowOnFinallyBlockException
                 && FinallyBlockExceptions.Any())
             {
@@ -199,7 +199,7 @@ namespace IntelliTect.TestTools.TestFramework
                 _ = TryBuildBlock(scope, block, out foundBlock);
             }
 
-            if(foundBlock is not null)
+            if (foundBlock is not null)
             {
                 blockInstance = foundBlock;
                 result = true;
@@ -233,7 +233,7 @@ namespace IntelliTect.TestTools.TestFramework
                 object? obj = ActivateObject(scope, block, c.ParameterType, "constructor argument");
                 if (obj is null)
                 {
-                    if(!CheckForITestLogger(c.ParameterType))
+                    if (!CheckForITestLogger(c.ParameterType))
                     {
                         blockInstance = null;
                         return false;
@@ -267,7 +267,7 @@ namespace IntelliTect.TestTools.TestFramework
                 object? obj = ActivateObject(scope, block, prop.PropertyType, "property");
                 if (obj is null)
                 {
-                    if(CheckForITestLogger(prop.PropertyType))
+                    if (CheckForITestLogger(prop.PropertyType))
                     {
                         continue;
                     }
@@ -288,12 +288,12 @@ namespace IntelliTect.TestTools.TestFramework
             foreach (ParameterInfo? ep in block.ExecuteParams)
             {
                 object? obj = null;
-                if(block.ExecuteArgumentOverrides.Count > 0)
+                if (block.ExecuteArgumentOverrides.Count > 0)
                 {
                     block.ExecuteArgumentOverrides.TryGetValue(ep.ParameterType, out obj);
                 }
 
-                if(obj is null)
+                if (obj is null)
                 {
                     obj = ActivateObject(scope, block, ep.ParameterType, "execute method argument");
                     if (obj is null)
@@ -325,9 +325,9 @@ namespace IntelliTect.TestTools.TestFramework
                     // Is the below check worth it?
                     // It is avoided if the test block asks for an interface if the dependency is implementing an interface.
                     // HOWEVER, this would facilitate injecting multiple different implementations in a test.
-                    if(obj is null)
+                    if (obj is null)
                     {
-                        foreach(var i in objectType.GetInterfaces())
+                        foreach (var i in objectType.GetInterfaces())
                         {
                             IEnumerable<object?> objs = scope.ServiceProvider.GetServices(i);
                             obj = objs.FirstOrDefault(o => o?.GetType() == objectType);
@@ -380,7 +380,7 @@ namespace IntelliTect.TestTools.TestFramework
                 {
                     dynamic asyncOutput = block.ExecuteMethod.Invoke(blockInstance, executeArgs.ToArray());
                     await asyncOutput;
-                    if(block.AsyncReturnType != typeof(void))
+                    if (block.AsyncReturnType != typeof(void))
                     {
                         output = asyncOutput.GetAwaiter().GetResult();
                     }
@@ -389,12 +389,28 @@ namespace IntelliTect.TestTools.TestFramework
                 {
                     output = block.ExecuteMethod.Invoke(blockInstance, executeArgs.ToArray());
                 }
-                
+
                 if (output is not null)
                 {
-                    Log?.TestBlockOutput(output);
-                    BlockOutput.Remove(output.GetType());
-                    BlockOutput.Add(output.GetType(), output);
+                    if (output is IBlockData blockData)
+                    {
+                        foreach (KeyValuePair<Type, object?> dataPoint in blockData.Data)
+                        {
+                            if (dataPoint.Value is not null)
+                            {
+                                Log?.TestBlockOutput(dataPoint.Value);
+                                BlockOutput.Remove(dataPoint.Key);
+                                BlockOutput.Add(dataPoint.Key, dataPoint.Value);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Log?.TestBlockOutput(output);
+                        Type outputType = output.GetType();
+                        BlockOutput.Remove(outputType);
+                        BlockOutput.Add(outputType, output);
+                    }
                 }
                 result = true;
             }
