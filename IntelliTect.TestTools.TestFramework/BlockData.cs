@@ -19,7 +19,7 @@ public class BlockData<T1, T2>(T1 data1, T2 data2) : IBlockData
     public T2 Data2 => data2;
     
 
-    IBlockData.List<KeyValuePair<Type, object?>> Data { get; } = 
+    List<KeyValuePair<Type, object?>> IBlockData.Data { get; } = 
     [
         new KeyValuePair<Type, object?>(typeof(T1), data1),
         new KeyValuePair<Type, object?>(typeof(T2), data2)
@@ -33,7 +33,11 @@ public class BlockData<T1, T2, T3>(T1 data1, T2 data2, T3 data3) : IBlockData
         ValidateData.ValidateUniqueTypes(typeof(T1), typeof(T2), typeof(T3));
     }
 
-    public List<KeyValuePair<Type, object?>> Data { get; } =
+    public T1 Data1 => data1;
+    public T2 Data2 => data2;
+    public T3 Data3 => data3;
+
+    List<KeyValuePair<Type, object?>> IBlockData.Data { get; } =
     [
         new KeyValuePair<Type, object?>(typeof(T1), data1),
         new KeyValuePair<Type, object?>(typeof(T2), data2),
@@ -48,7 +52,12 @@ public class BlockData<T1, T2, T3, T4>(T1 data1, T2 data2, T3 data3, T4 data4) :
         ValidateData.ValidateUniqueTypes(typeof(T1), typeof(T2), typeof(T3), typeof(T4));
     }
 
-    public List<KeyValuePair<Type, object?>> Data { get; } =
+    public T1 Data1 => data1;
+    public T2 Data2 => data2;
+    public T3 Data3 => data3;
+    public T4 Data4 => data4;
+
+    List<KeyValuePair<Type, object?>> IBlockData.Data { get; } =
     [
         new KeyValuePair<Type, object?>(typeof(T1), data1),
         new KeyValuePair<Type, object?>(typeof(T2), data2),

@@ -43,23 +43,29 @@ public class TestDataTests
     }
 
     [Fact]
-    public void BlockDataT1T2DoesNotThrowExceptionOnWithUniqueTypes()
+    public void BlockDataT1T2DoesNotThrowExceptionWithUniqueTypes()
     {
         BlockData<int, bool> blockData = new(1, true);
-        Assert.Equal(2, blockData.Data.Count);
+        Assert.Equal(1, blockData.Data1);
+        Assert.True(blockData.Data2);
     }
 
     [Fact]
-    public void BlockDataT1T2T3DoesNotThrowExceptionOnWithUniqueTypes()
+    public void BlockDataT1T2T3DoesNotThrowExceptionWithUniqueTypes()
     {
         BlockData<ArgumentException, Exception, bool> blockData = new(new ArgumentException(), new Exception(), true);
-        Assert.Equal(3, blockData.Data.Count);
+        Assert.IsType<ArgumentException>(blockData.Data1);
+        Assert.IsType<Exception>(blockData.Data2);
+        Assert.True(blockData.Data3);
     }
 
     [Fact]
-    public void BlockDataT1T2T3T4DoesNotThrowExceptionOnWithUniqueTypes()
+    public void BlockDataT1T2T3T4DoesNotThrowExceptionWithUniqueTypes()
     {
         BlockData<int, bool, string, double> blockData = new(1, true, "", 0.5);
-        Assert.Equal(4, blockData.Data.Count);
+        Assert.Equal(1, blockData.Data1);
+        Assert.True(blockData.Data2);
+        Assert.Equal("", blockData.Data3);
+        Assert.Equal(0.5, blockData.Data4);
     }
 }
