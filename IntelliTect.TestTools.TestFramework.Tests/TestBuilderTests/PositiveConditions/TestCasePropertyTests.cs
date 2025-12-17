@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Sdk;
 
 namespace IntelliTect.TestTools.TestFramework.Tests.TestBuilderTests
 {
@@ -166,6 +167,40 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestBuilderTests
 
             // Assert
             Assert.True(tc.Passed);
+        }
+
+        [Fact]
+        public async Task TestCaseWithDefaultValuePassedTurnsTrueOnSuccessfulExecution()
+        {
+            // Arrange
+            TestCase tc = new TestBuilder()
+                .AddTestBlock<ExampleTestBlockWithDefaultExecuteArg>()
+                .Build();
+
+            // Act
+            await tc.ExecuteAsync();
+
+            // Assert
+            Assert.True(tc.Passed);
+        }
+
+        [Fact]
+        public async Task TestCasePassedTurnsFalseOnIncorrectDefaultValueOverride()
+        {
+            // Arrange
+            TestCase tc = new TestBuilder()
+                // Test block checks for equalitiy to "test", so we deliberately inject a bad value to check that the check fails.
+                .AddDependencyInstance("Testing") 
+                .AddTestBlock<ExampleTestBlockWithDefaultExecuteArg>()
+                .Build();
+
+            // Act
+            TestCaseException exception = await Assert.ThrowsAsync<TestCaseException>(tc.ExecuteAsync);
+
+            // Assert
+            Assert.NotNull(exception.InnerException);
+            Assert.Equal(typeof(EqualException), exception.InnerException.GetType());
+            Assert.False(tc.Passed);
         }
     }
 }

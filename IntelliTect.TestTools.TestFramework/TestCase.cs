@@ -298,7 +298,18 @@ namespace IntelliTect.TestTools.TestFramework
                     obj = ActivateObject(scope, block, ep.ParameterType, "execute method argument");
                     if (obj is null)
                     {
-                        if (CheckForITestLogger(ep.ParameterType))
+                        if (ep.HasDefaultValue)
+                        {
+                            executeArgs.Add(ep.DefaultValue);
+                            // Probably an easier way to clear exceptions now that we have to do this twice (also in CheckForITestLogger)
+                            TestBlockException = null;
+                            if (FinallyBlockExceptions.Count > 0)
+                            {
+                                FinallyBlockExceptions.Remove(FinallyBlockExceptions.Last());
+                            }
+                            continue;
+                        }
+                        else if (CheckForITestLogger(ep.ParameterType))
                         {
                             executeArgs.Add(null);
                             continue;
@@ -346,6 +357,8 @@ namespace IntelliTect.TestTools.TestFramework
                     );
                 }
             }
+
+            // Handle default values here
 
             // If we've already set an exception, i.e. the GetService call above failed, don't override it.
             // This is to account for two different scenarios: a dependency is not present (below) vs. a dependency is present but failed to activate (above).

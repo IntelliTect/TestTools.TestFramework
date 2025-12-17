@@ -300,7 +300,10 @@ namespace IntelliTect.TestTools.TestFramework
             }
             foreach (var e in tb.ExecuteParams)
             {
-                inputs.Add(e.ParameterType);
+                if (!e.HasDefaultValue)
+                {
+                    inputs.Add(e.ParameterType);
+                }
             }
 
             if (!HasLogger) inputs.RemoveWhere(i => i == typeof(ITestCaseLogger));

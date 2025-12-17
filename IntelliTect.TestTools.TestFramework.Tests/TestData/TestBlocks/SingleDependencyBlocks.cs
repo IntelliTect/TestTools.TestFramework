@@ -13,6 +13,14 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestData.TestBlocks
         }
     }
 
+    public class ExampleTestBlockWithDefaultExecuteArg : TestBlock
+    {
+        public void Execute(string input = "test")
+        {
+            Assert.Equal("test", input);
+        }
+    }
+
     public class ExampleTestBlockWithProperty : TestBlock
     {
         public string? Input { get; set; }
