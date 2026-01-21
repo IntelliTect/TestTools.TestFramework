@@ -41,7 +41,7 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build -p:ContinuousIntegrationBuild=True --no-restore --configuration Release
-    - uses: browser-actions/setup-chrome@v1
+    - uses: browser-actions/setup-chrome@v2
       with:
         chrome-version: latest
       id: setup-chrome
