@@ -104,7 +104,7 @@ namespace IntelliTect.TestTools.TestFramework
             Block fb = CreateBlock<T>(testBlockArgs);
             fb.IsFinallyBlock = true;
             fb.IsAsync = true;
-            TestBlocks.Add(fb);
+            FinallyBlocks.Add(fb);
             return this;
         }
 

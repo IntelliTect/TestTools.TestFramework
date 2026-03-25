@@ -110,6 +110,15 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestData.Dependencies
         }
     }
 
+    public class ExampleAsyncFinallyBlock : TestBlock
+    {
+        public async Task Execute(bool result)
+        {
+            await Task.Delay(1);
+            Assert.True(result, "This is an expected failure.");
+        }
+    }
+
     public class ExampleAsyncBlockWithReturn : TestBlock
     {
         public async Task<bool> Execute()
