@@ -134,4 +134,12 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestData.Dependencies
             await Task.Delay(1);
         }
     }
+
+    public class ExampleBlockCheckingTestSuccess : TestBlock
+    {
+        public void Execute(TestCase tc)
+        {
+            Assert.True(tc.Passed);
+        }
+    }
 }

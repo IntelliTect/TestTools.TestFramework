@@ -114,6 +114,16 @@ namespace IntelliTect.TestTools.TestFramework
                     }
                 }
 
+                if (TestBlockException is null)
+                {
+                    Passed = true;
+                    Log?.Info("Test case finished successfully.");
+                }
+                else
+                {
+                    Log?.Critical($"Test case failed and will continue to executing Finally blocks. Exception: {TestBlockException}");
+                }
+
                 foreach (var fb in FinallyBlocks)
                 {
                     if (Log is not null) Log.CurrentTestBlock = fb.Type.ToString();
@@ -128,20 +138,6 @@ namespace IntelliTect.TestTools.TestFramework
                     {
                         Log?.Critical($"Finally block failed: {FinallyBlockExceptions.LastOrDefault()}");
                     }
-                }
-
-                if (TestBlockException is null)
-                {
-                    // Note: This likely needs to be moved up above the finally blocks.
-                    // If a test case "passes" i.e. finishes all of its test blocks, we probably need to know that
-                    //  in the finally blocks.
-                    // Need to think about how to handle "passed" state if a finally block fails.
-                    Passed = true;
-                    Log?.Info("Test case finished successfully.");
-                }
-                else
-                {
-                    Log?.Critical($"Test case failed: {TestBlockException}");
                 }
             }
 

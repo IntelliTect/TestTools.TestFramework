@@ -3,6 +3,7 @@ using IntelliTect.TestTools.TestFramework.Tests.TestData.TestBlocks;
 using System;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Sdk;
 
 namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
 {
@@ -200,6 +201,44 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
 
             // Assert
             Assert.False(tc.Passed, "Test case did not get marked as Failed when we expected it.");
+        }
+
+        [Fact]
+        public async Task TestCasePassedIsSetTrueBeforeFinallyBlocksRun()
+        {
+            // Arrange
+            TestCase tc = new TestBuilder()
+                .AddDependencyInstance(true)
+                .AddTestBlock<ExampleTestBlockWithBoolReturn>()
+                .AddFinallyBlock<ExampleBlockCheckingTestSuccess>()
+                .Build();
+
+            // Act
+            await tc.ExecuteAsync();
+
+            // Assert
+            Assert.True(tc.Passed, "Test case did not get marked as Passed when we expected it.");
+        }
+
+        [Fact]
+        public async Task TestCasePassedIsSetTrueEvenIfFinallyBlockFails()
+        {
+            // Arrange
+            TestCase tc = new TestBuilder()
+                .AddDependencyInstance(false)
+                .AddTestBlock<ExampleTestBlockWithBoolReturn>()
+                .AddFinallyBlock<ExampleBlockCheckingTestSuccess>()
+                .Build();
+
+            // Act
+            AggregateException exception = await Assert.ThrowsAsync<AggregateException>(() => tc.ExecuteAsync());
+
+            // Assert
+            Assert.Equal(2, exception.InnerExceptions.Count);
+            Assert.Equal(typeof(DivideByZeroException), exception.InnerException?.GetType());
+            Assert.Equal(typeof(DivideByZeroException), exception.InnerExceptions[0].GetType());
+            Assert.Equal(typeof(TrueException), exception.InnerExceptions[1].GetType());
+            Assert.False(tc.Passed, "Test case was marked as Passed when we did not expected it.");
         }
     }
 }
