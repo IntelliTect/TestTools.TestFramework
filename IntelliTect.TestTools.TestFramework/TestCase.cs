@@ -47,7 +47,8 @@ namespace IntelliTect.TestTools.TestFramework
         /// <remarks>This collection contains all exceptions that occurred in finally blocks, allowing
         /// callers to inspect or handle them after execution. The list is empty if no exceptions were thrown in any
         /// finally block.</remarks>
-        public List<Exception> FinallyBlockExceptions { get; } = [];
+        //public readonly List<Exception> FinallBlockExceptions { get; } = [];
+        public IReadOnlyList<Exception> CurrentFinallyBlockExceptions => FinallyBlockExceptions;
         /// <summary>
         /// Did the test case pass? This is determined by whether any test block threw an exception.
         /// </summary>
@@ -66,6 +67,7 @@ namespace IntelliTect.TestTools.TestFramework
         private ITestCaseLogger? Log { get; set; }
         private IServiceCollection ServiceCollection { get; }
         private Dictionary<Type, object> BlockOutput { get; } = [];
+        private List<Exception> FinallyBlockExceptions { get; } = [];
 
         /// <summary>
         /// Legacy method signature. Executes the test case. NOTE: Prefer to use ExecuteAsync, even if you have no awaitable test blocks.

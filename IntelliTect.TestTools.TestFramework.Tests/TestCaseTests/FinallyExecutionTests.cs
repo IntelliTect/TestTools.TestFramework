@@ -240,5 +240,24 @@ namespace IntelliTect.TestTools.TestFramework.Tests.TestCaseTests
             Assert.Equal(typeof(TrueException), exception.InnerExceptions[1].GetType());
             Assert.False(tc.Passed, "Test case was marked as Passed when we did not expected it.");
         }
+
+        [Fact]
+        public async Task CurrentFinallyBlockExceptionCountIncrementsWithEveryFailure()
+        {
+            // Arrange
+            TestCase tc = new TestBuilder()
+                .AddFinallyBlock<ExampleFinallyBlock>(false)
+                .AddFinallyBlock<ExampleFinallyBlock>(false)
+                .Build();
+            tc.ThrowOnFinallyBlockException = false;
+
+            // Act
+            await tc.ExecuteAsync();
+
+            // Assert
+            var test = tc.CurrentFinallyBlockExceptions;
+            Assert.Equal(2, tc.CurrentFinallyBlockExceptions.Count);
+            Assert.True(tc.Passed, "Test case did not get marked as Passed when we expected it.");
+        }
     }
 }
