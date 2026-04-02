@@ -37,22 +37,37 @@ namespace IntelliTect.TestTools.TestFramework
         /// If a finally block fails and this property is true, the test case is still considered passed internally, but most unit test frameworks will mark the test failed.
         /// </summary>
         public bool ThrowOnFinallyBlockException { get; set; } = true;
+        /// <summary>
+        /// If any test block throws an exception, it will be stored here. Finally block exceptions are stored separately in FinallyBlockExceptions. If this is not null at the end of the test case execution, the test case is considered failed.
+        /// </summary>
+        public Exception? TestBlockException { get; private set; }
+        /// <summary>
+        /// Gets the list of exceptions that were thrown during the execution of finally blocks.
+        /// </summary>
+        /// <remarks>This collection contains all exceptions that occurred in finally blocks, allowing
+        /// callers to inspect or handle them after execution. The list is empty if no exceptions were thrown in any
+        /// finally block.</remarks>
+        //public readonly List<Exception> FinallBlockExceptions { get; } = [];
+        public IReadOnlyList<Exception> CurrentFinallyBlockExceptions => FinallyBlockExceptions;
+        /// <summary>
+        /// Did the test case pass? This is determined by whether any test block threw an exception.
+        /// </summary>
+        /// <remarks>
+        /// Finally block exceptions do not cause the test case to be marked as failed, but they are still captured and can cause the test case to throw after execution if ThrowOnFinallyBlockException is true.
+        /// </remarks>
+        public bool Passed { get; set; }
 
         // May make sense to make some of the below public if it's needed for debugging.
         // If so, definitely need to change them to internal or private sets.
 
-        internal List<Block> TestBlocks { get; set; } = new();
-        internal List<Block> FinallyBlocks { get; set; } = new();
+        internal List<Block> TestBlocks { get; set; } = [];
+        internal List<Block> FinallyBlocks { get; set; } = [];
         internal bool HasLogger { get; set; } = true;
 
         private ITestCaseLogger? Log { get; set; }
         private IServiceCollection ServiceCollection { get; }
-        private Dictionary<Type, object> BlockOutput { get; } = new();
-        private Exception? TestBlockException { get; set; }
-        private List<Exception> FinallyBlockExceptions { get; } = new();
-
-        // Has this test case passed? Will only be true if every regular test block succeeds.
-        public bool Passed { get; set; }
+        private Dictionary<Type, object> BlockOutput { get; } = [];
+        private List<Exception> FinallyBlockExceptions { get; } = [];
 
         /// <summary>
         /// Legacy method signature. Executes the test case. NOTE: Prefer to use ExecuteAsync, even if you have no awaitable test blocks.
@@ -101,6 +116,16 @@ namespace IntelliTect.TestTools.TestFramework
                     }
                 }
 
+                if (TestBlockException is null)
+                {
+                    Passed = true;
+                    Log?.Info("Test case finished successfully.");
+                }
+                else
+                {
+                    Log?.Critical($"Test case failed and will continue to executing Finally blocks. Exception: {TestBlockException}");
+                }
+
                 foreach (var fb in FinallyBlocks)
                 {
                     if (Log is not null) Log.CurrentTestBlock = fb.Type.ToString();
@@ -115,20 +140,6 @@ namespace IntelliTect.TestTools.TestFramework
                     {
                         Log?.Critical($"Finally block failed: {FinallyBlockExceptions.LastOrDefault()}");
                     }
-                }
-
-                if (TestBlockException is null)
-                {
-                    // Note: This likely needs to be moved up above the finally blocks.
-                    // If a test case "passes" i.e. finishes all of its test blocks, we probably need to know that
-                    //  in the finally blocks.
-                    // Need to think about how to handle "passed" state if a finally block fails.
-                    Passed = true;
-                    Log?.Info("Test case finished successfully.");
-                }
-                else
-                {
-                    Log?.Critical($"Test case failed: {TestBlockException}");
                 }
             }
 
