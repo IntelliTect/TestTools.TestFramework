@@ -14,7 +14,7 @@
     <PackageReference Include="IntelliTect.Analyzers" Version="0.2.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="IntelliTect.TestTools.TestFramework" Version="1.2.1" />
+    <PackageReference Include="IntelliTect.TestTools.TestFramework" Version="2.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageReference Include="Selenium.WebDriver" Version="4.32.0" />
     <PackageReference Include="System.Text.Json" Version="9.0.4" />
